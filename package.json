@@ -1,0 +1,24 @@
+{
+  "name": "express-blog-sql",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/thomaslazzeri/express-blog-sql#readme",
+  "bugs": {
+    "url": "https://github.com/thomaslazzeri/express-blog-sql/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thomaslazzeri/express-blog-sql.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "watch": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
