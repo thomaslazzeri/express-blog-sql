@@ -1,10 +1,15 @@
 import { connection } from '../../db.js';
 
 export const getAll = async (req, res) => {
-    const sql = 'select * from posts';
-    const [results] = await connection.query(sql);
+    try {
+        const sql = 'select * from posts';
+        const [results] = await connection.query(sql);
 
-    res.json(results);
+        res.json(results);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'errore nel recupero dei post' });
+    }
 };
 
 export const getById = async (req, res) => {
@@ -15,15 +20,16 @@ export const getById = async (req, res) => {
         return;
     }
 
-    const sqlPost = 'select * from posts where id = ?';
-    const [[resultPost]] = await connection.query(sqlPost, [id]);
+    try {
+        const sqlPost = 'select * from posts where id = ?';
+        const [[resultPost]] = await connection.query(sqlPost, [id]);
 
-    if (resultPost === undefined) {
-        res.status(404).json({ error: 'post not found' });
-        return;
-    }
+        if (resultPost === undefined) {
+            res.status(404).json({ error: 'post not found' });
+            return;
+        }
 
-    const sqlTags = `
+        const sqlTags = `
     select t.id, t.label
     from tags t
     join post_tag pt on pt.tag_id = t.id
@@ -31,10 +37,14 @@ export const getById = async (req, res) => {
     `;
 
 
-    const [resultTags] = await connection.query(sqlTags, [id]);
-    resultPost.tags = resultTags;
+        const [resultTags] = await connection.query(sqlTags, [id]);
+        resultPost.tags = resultTags;
 
-    res.json(resultPost);
+        res.json(resultPost);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'errore nel recupero del post' });
+    }
 };
 
 export const destroy = async (req, res) => {
@@ -44,14 +54,20 @@ export const destroy = async (req, res) => {
         res.status(400).json({ error: 'id must be an integer' });
         return;
     }
+    try {
 
-    const sql = 'delete from posts where id = ?';
-    const [result] = await connection.query(sql, [id]);
 
-    if (result.affectedRows === 0) {
-        res.status(404).json({ error: 'post not found' });
-        return;
+        const sql = 'delete from posts where id = ?';
+        const [result] = await connection.query(sql, [id]);
+
+        if (result.affectedRows === 0) {
+            res.status(404).json({ error: 'post not found' });
+            return;
+        }
+
+        res.sendStatus(204);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'errore nella cancellazione del post' });
     }
-
-    res.sendStatus(204);
 };
